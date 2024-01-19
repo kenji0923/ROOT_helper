@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <iostream>
 
+#include "TAxis.h"
 #include "TCanvas.h"
 #include "TClass.h"
 #include "TFile.h"
@@ -92,6 +93,53 @@ std::filesystem::path DataSaver::create_directory(PathTypes&&... directory_names
   std::filesystem::create_directories(save_dir);
   return save_dir;
 }
+
+namespace publish
+{
+
+TCanvas* create_canvas(const std::string& name, const std::string& title, const unsigned int n_pad_x=1, const unsigned int n_pad_y=1, const unsigned int each_size_x=700, const unsigned int each_size_y=500);
+
+void prepare();
+
+template<class GraphType>
+void set_axes(GraphType* graph_object)
+{
+  gPad->SetTopMargin(0.075);
+  gPad->SetRightMargin(0.10);
+  gPad->SetBottomMargin(0.16);
+  gPad->SetLeftMargin(0.185);
+
+  const double title_size = 0.07;
+  const double label_size = 0.07;
+  const double title_offset_x = 1.1;
+  const double title_offset_y = 1.4;
+  const double label_offset_x = 0.015;
+
+  TAxis* axis;
+
+  axis  = graph_object->GetXaxis();
+  axis->SetTitleSize(title_size);
+  axis->SetLabelSize(label_size);
+  axis->SetTitleOffset(title_offset_x);
+  axis->SetLabelOffset(label_offset_x);
+  axis->SetMaxDigits(3);
+  axis->SetNdivisions(505);
+  axis->SetDecimals(true);
+  axis->CenterTitle();
+
+  axis = graph_object->GetYaxis();
+  axis->SetTitleSize(title_size);
+  axis->SetLabelSize(label_size);
+  axis->SetTitleOffset(title_offset_y);
+  axis->SetMaxDigits(3);
+  axis->SetNdivisions(505);
+  axis->SetDecimals(true);
+  axis->CenterTitle();
+}
+
+void remove_top_right_margin();
+
+} // namespace publish
 
 TLine* draw_horizontal_line(const double y);
 

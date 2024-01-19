@@ -5,6 +5,7 @@
 
 #include "TF1.h"
 #include "TSpline.h"
+#include "TStyle.h"
 
 namespace root_helper {
 
@@ -29,6 +30,27 @@ void DataSaver::save_data_object(TObject* obj) const
     }
   }
 }
+
+namespace publish
+{
+
+void prepare()
+{
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(0);
+  gStyle->SetOptTitle(0);
+}
+
+TCanvas* create_canvas(const std::string& name, const std::string& title, const unsigned int n_pad_x, const unsigned int n_pad_y, const unsigned int each_size_x, const unsigned int each_size_y)
+{
+  TCanvas* c = new TCanvas(name.c_str(), title.c_str(), n_pad_x * each_size_x, n_pad_y * each_size_y);
+  if (n_pad_x > 1 || n_pad_y > 1) {
+    c->Divide(n_pad_x, n_pad_y);
+  }
+  return c;
+}
+
+} // namespace publish
 
 double find_x(const TGraph*g, const double y, double x_start, double x_end)
 {
