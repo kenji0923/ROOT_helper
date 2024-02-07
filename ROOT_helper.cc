@@ -2,33 +2,64 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <memory>
+#include <regex>
 
+#include <RtypesCore.h>
 #include "TF1.h"
+#include "TLegend.h"
+#include "TMultiGraph.h"
 #include "TSpline.h"
 #include "TStyle.h"
 
 namespace root_helper {
 
-DataSaver::DataSaver(const std::filesystem::path& base_dir)
-: base_dir_(base_dir)
+DataSaver::DataSaver(const std::filesystem::path& base_directory)
+: base_directory_(base_directory)
 {
+  std::filesystem::create_directories(base_directory_);
+  f_write_ = std::make_unique<TFile>((base_directory / "data.root").c_str(), "RECREATE");
 }
 
-void DataSaver::save_data_object(TObject* obj) const
+DataSaver::~DataSaver()
 {
-  if (obj->InheritsFrom(TClass::GetClass<TPad>())) {
-    TList* l_prim = static_cast<TPad*>(obj)->GetListOfPrimitives();
-    for (auto* child : *l_prim) {
-      save_data_object(child);
-    }
-  } else {
-    for (const auto* class_type : class_to_save_list_) {
-      if (obj->InheritsFrom(class_type)) {
-        obj->Write();
-        break;
-      }
-    }
+  f_write_->Save();
+}
+
+void DataSaver::write_canvas(TCanvas* c, const std::filesystem::path& relative_save_directory) const
+{
+  const std::filesystem::path write_directory = base_directory_ / relative_save_directory;
+
+  save_object(c, relative_save_directory);
+
+  c->Print(Form("%s.pdf", (write_directory / c->GetName()).c_str()));
+
+  std::filesystem::path png_save_directory = write_directory / "png";
+  std::filesystem::create_directories(png_save_directory);
+  c->Print(Form("%s.png", (png_save_directory / c->GetName()).c_str()));
+}
+
+std::filesystem::path DataSaver::create_directories(const std::filesystem::path& relative_path) const
+{
+  const std::filesystem::path created_path = base_directory_ / relative_path;
+  std::filesystem::create_directories(created_path);
+  return created_path;
+}
+
+void DataSaver::create_and_change_directory(const std::filesystem::path& relative_save_directory) const
+{
+  std::filesystem::create_directories(base_directory_ / relative_save_directory);
+
+  const std::string relative_ROOT_directory = relative_save_directory.string();
+  TDirectory* root_directory = f_write_->GetDirectory(relative_ROOT_directory.c_str());
+
+  if (!root_directory) {
+    auto it_path = relative_save_directory.end();
+    --it_path;
+    root_directory = f_write_->mkdir(relative_save_directory.c_str(), (*it_path).c_str(), kFALSE);
   }
+
+  root_directory->cd();
 }
 
 namespace publish
@@ -41,6 +72,23 @@ void prepare()
   gStyle->SetOptTitle(0);
 }
 
+std::pair<unsigned int, unsigned int> get_default_n_pad(const unsigned int n_plot)
+{
+    if (n_plot <= 1) {
+	return { 1, 1 };
+    } else if (n_plot <= 2) {
+	return { 2, 1 };
+    } else if (n_plot <= 4) {
+	return { 2, 2 };
+    } else if (n_plot <= 6) {
+	return { 3, 2 };
+    } else if (n_plot <= 9) {
+	return { 3, 3 };
+    } else {
+	return { 4, 3 };
+    }
+}
+
 TCanvas* create_canvas(const std::string& name, const std::string& title, const unsigned int n_pad_x, const unsigned int n_pad_y, const unsigned int each_size_x, const unsigned int each_size_y)
 {
   TCanvas* c = new TCanvas(name.c_str(), title.c_str(), n_pad_x * each_size_x, n_pad_y * each_size_y);
@@ -50,7 +98,57 @@ TCanvas* create_canvas(const std::string& name, const std::string& title, const 
   return c;
 }
 
+TLegend* put_legend(unsigned int position, Option_t* option, const double width, const double height)
+{
+  const Double_t top_edge = 1.0 - gPad->GetTopMargin() - 0.02;
+  const Double_t right_edge = 1.0 - gPad->GetRightMargin() - 0.02;
+  const Double_t bottom_edge = gPad->GetBottomMargin() + 0.02;
+  const Double_t left_edge = gPad->GetLeftMargin() + 0.02;
+
+  TLegend* leg;
+  if (position == 0) { // Top-left
+    leg = gPad->BuildLegend(width, height, width, height,  "", option);
+  } else if (position == 1) { // Top-right
+    leg = gPad->BuildLegend(right_edge - width, top_edge, right_edge, top_edge - height, "", option);
+  } else if (position == 2) { // Bottom-right
+    leg = gPad->BuildLegend(right_edge - width, bottom_edge + height, right_edge, bottom_edge, "", option);
+  } else if (position == 3) {
+    leg = gPad->BuildLegend(width, height, width, height,  "", option);
+  } else {
+    leg = gPad->BuildLegend(width, height, width, height,  "", option);
+  }
+
+  leg->SetBorderSize(0);
+  leg->SetTextSize(0.06);
+
+  return leg;
+}
+
 } // namespace publish
+
+TMultiGraph* set_multigraph_axis_from_member(TMultiGraph* mg)
+{
+  TList* list = mg->GetListOfGraphs();
+  for (auto* obj : *list) {
+    TGraph* g = static_cast<TGraph*>(obj);
+
+    std::string new_title;
+    std::smatch m_title;
+    const std::string orig_title = mg->GetTitle();
+    if (std::regex_search(orig_title, m_title, std::regex("^(.+);$"))) {
+      new_title = m_title.str(1);
+    } else {
+      new_title = orig_title;
+    }
+    const std::string new_title_x = g->GetXaxis()->GetTitle();
+    const std::string new_title_y = g->GetYaxis()->GetTitle();
+
+    mg->SetTitle(Form("%s;%s;%s", new_title.c_str(), new_title_x.c_str(), new_title_y.c_str()));
+
+    break;
+  }
+  return mg;
+}
 
 double find_x(const TGraph*g, const double y, double x_start, double x_end)
 {
