@@ -6,21 +6,21 @@
 #include <memory>
 #include <utility>
 
-#include "TAxis.h"
-#include "TCanvas.h"
-#include "TClass.h"
+#include <TAxis.h>
+#include <TCanvas.h>
+#include <TClass.h>
 #include <TDirectory.h>
-#include "TFile.h"
-#include "TGraph.h"
-#include "TGraph2D.h"
-#include "TH1.h"
-#include "TLegend.h"
-#include "TLine.h"
-#include "TMultiGraph.h"
-#include "TObject.h"
-#include "TPad.h"
+#include <TFile.h>
+#include <TGraph.h>
+#include <TGraph2D.h>
+#include <TH1.h>
+#include <TLegend.h>
+#include <TLine.h>
+#include <TMultiGraph.h>
+#include <TObject.h>
+#include <TPad.h>
 
-namespace root_helper
+namespace ROOT_helper
 {
 
 class DataSaver
@@ -258,6 +258,6 @@ TGraph* convert_graph_yaxis(TGraph** g, ConverterType conversion_expr, const std
   return *g;
 }
 
-}; // namespace root_helper
+}; // namespace ROOT_helper
 
 #endif

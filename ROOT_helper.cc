@@ -6,13 +6,13 @@
 #include <regex>
 
 #include <RtypesCore.h>
-#include "TF1.h"
-#include "TLegend.h"
-#include "TMultiGraph.h"
-#include "TSpline.h"
-#include "TStyle.h"
+#include <TF1.h>
+#include <TLegend.h>
+#include <TMultiGraph.h>
+#include <TSpline.h>
+#include <TStyle.h>
 
-namespace root_helper {
+namespace ROOT_helper {
 
 DataSaver::DataSaver(const std::filesystem::path& base_directory)
 : base_directory_(base_directory)
@@ -182,4 +182,4 @@ TLine* draw_horizontal_line(const double y)
   return l;
 }
 
-}; // namespace root_helper
+}; // namespace ROOT_helper
