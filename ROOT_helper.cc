@@ -7,6 +7,7 @@
 
 #include <RtypesCore.h>
 #include <TF1.h>
+#include <TGraph.h>
 #include <TLegend.h>
 #include <TMultiGraph.h>
 #include <TSpline.h>
@@ -98,6 +99,12 @@ TCanvas* create_canvas(const std::string& name, const std::string& title, const 
   return c;
 }
 
+TCanvas* create_canvas_with_default_pad_matrix(const std::string& name, const std::string& title, const unsigned int n_pad, const unsigned int each_size_x, const unsigned int each_size_y)
+{
+    auto [ n_pad_x, n_pad_y ] = get_default_n_pad(n_pad);
+    return create_canvas(name, title, n_pad_x, n_pad_y, each_size_x, each_size_y);
+}
+
 TLegend* put_legend(unsigned int position, Option_t* option, const double width, const double height)
 {
   const Double_t top_edge = 1.0 - gPad->GetTopMargin() - 0.02;
@@ -107,7 +114,7 @@ TLegend* put_legend(unsigned int position, Option_t* option, const double width,
 
   TLegend* leg;
   if (position == 0) { // Top-left
-    leg = gPad->BuildLegend(width, height, width, height,  "", option);
+    leg = gPad->BuildLegend(left_edge, top_edge, left_edge + width, top_edge - height,  "", option);
   } else if (position == 1) { // Top-right
     leg = gPad->BuildLegend(right_edge - width, top_edge, right_edge, top_edge - height, "", option);
   } else if (position == 2) { // Bottom-right
@@ -122,6 +129,49 @@ TLegend* put_legend(unsigned int position, Option_t* option, const double width,
   leg->SetTextSize(0.06);
 
   return leg;
+}
+
+template<class ObjType, class IteratableType>
+void set_colors_by_ring(IteratableType* iteratable, Color_t base_color=1, Int_t inc_color=+1)
+{
+    Color_t color = base_color;
+
+    for (auto* obj : *iteratable) {
+	ObjType* obj_casted = dynamic_cast<ObjType*>(obj);
+	if (!obj_casted) continue;
+
+	obj_casted->SetLineColor(color);
+	obj_casted->SetMarkerColor(color);
+
+	color += inc_color;
+    }
+}
+
+template<class ObjType, class IteratableType>
+void set_marker_styles_by_ring(IteratableType* iteratable, Style_t base_style=20, Int_t inc_style=+1)
+{
+    Style_t style = base_style;
+
+    for (auto* obj : *iteratable) {
+	ObjType* obj_casted = dynamic_cast<ObjType*>(obj);
+	if (!obj_casted) continue;
+
+	obj_casted->SetMarkerStyle(style);
+
+	style += inc_style;
+    }
+}
+
+TMultiGraph* set_graph_colors_by_ring(TMultiGraph* mg)
+{
+    set_colors_by_ring<TGraph>(mg->GetListOfGraphs());
+    return mg;
+}
+
+TMultiGraph* set_graph_marker_styles_by_ring(TMultiGraph* mg)
+{
+    set_marker_styles_by_ring<TGraph>(mg->GetListOfGraphs());
+    return mg;
 }
 
 } // namespace publish
@@ -150,6 +200,22 @@ TMultiGraph* set_multigraph_axis_from_member(TMultiGraph* mg)
   return mg;
 }
 
+TLine* draw_horizontal_line(const double y)
+{
+  gPad->Update();
+  TLine* l = new TLine(gPad->GetUxmin(), y, gPad->GetUxmax(), y);
+  l->Draw("SAME");
+  return l;
+}
+
+TLine* draw_vertical_line(const double x)
+{
+  gPad->Update();
+  TLine* l = new TLine(x, gPad->GetUymin(), x, gPad->GetUymax());
+  l->Draw("SAME");
+  return l;
+}
+
 double find_x(const TGraph*g, const double y, double x_start, double x_end)
 {
   if (x_start >= x_end) {
@@ -172,14 +238,6 @@ double find_x(const TGraph*g, const double y, double x_start, double x_end)
   delete spl;
 
   return x;
-}
-
-TLine* draw_horizontal_line(const double y)
-{
-  gPad->Update();
-  TLine* l = new TLine(gPad->GetUxmin(), y, gPad->GetUxmax(), y);
-  l->Draw("SAME");
-  return l;
 }
 
 }; // namespace ROOT_helper

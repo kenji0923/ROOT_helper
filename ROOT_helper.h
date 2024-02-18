@@ -6,6 +6,7 @@
 #include <memory>
 #include <utility>
 
+#include <RtypesCore.h>
 #include <TAxis.h>
 #include <TCanvas.h>
 #include <TClass.h>
@@ -53,9 +54,11 @@ void DataSaver::save_object(ObjectType* obj, const std::filesystem::path& relati
 
   auto save_child = [relative_save_directory, this](TList* list)
   {
-    for (auto* child : *list) {
-      save_object(child, relative_save_directory);
-    }
+      if (list) {
+	  for (auto* child : *list) {
+	      save_object(child, relative_save_directory);
+	  }
+      }
   };
 
   if (obj->InheritsFrom(TClass::GetClass<TPad>())) {
@@ -79,20 +82,25 @@ namespace publish
 
 static const double top_margin = 0.075;
 static const double right_margin = 0.05;
-static const double bottom_margin = 0.16;
+static const double bottom_margin = 0.20;
 static const double left_margin = 0.14;
 
 static const double title_size = 0.07;
 static const double label_size = 0.07;
-static const double title_offset_x = 1.1;
+static const double title_offset_x = 1.3;
 static const double title_offset_y = 1.0;
 static const double label_offset_x = 0.015;
+
+static const double left_margin_medium = 0.15;
+static const double title_offset_y_medium = 1.15;
 
 void prepare();
 
 std::pair<unsigned int, unsigned int> get_default_n_pad(const unsigned int n_plot);
 
 TCanvas* create_canvas(const std::string& name, const std::string& title, const unsigned int n_pad_x=1, const unsigned int n_pad_y=1, const unsigned int each_size_x=700, const unsigned int each_size_y=500);
+
+TCanvas* create_canvas_with_default_pad_matrix(const std::string& name, const std::string& title, const unsigned int n_pad=1, const unsigned int each_size_x=700, const unsigned int each_size_y=500);
 
 template<class GraphType>
 void set_max_digit_x(GraphType* graph_object)
@@ -152,6 +160,10 @@ void set_x_axis(GraphType* graph_object)
 
 }
 
+/**
+ * Smallest margin.
+ * Suitable for the axis with the positive range
+ */
 template<class GraphType>
 void set_y_axis(GraphType* graph_object)
 {
@@ -170,10 +182,43 @@ void set_y_axis(GraphType* graph_object)
 }
 
 template<class GraphType>
+void set_y_axis_medium(GraphType* graph_object)
+{
+  gPad->SetTopMargin(top_margin);
+  gPad->SetLeftMargin(left_margin_medium);
+
+  TAxis* axis;
+
+  axis = graph_object->GetYaxis();
+  axis->SetTitleSize(title_size);
+  axis->SetLabelSize(label_size);
+  axis->SetTitleOffset(title_offset_y_medium);
+  axis->SetNdivisions(505);
+  axis->SetDecimals(true);
+  axis->CenterTitle();
+}
+
+template<class GraphType>
 void set_axes(GraphType* graph_object)
 {
   set_x_axis(graph_object);
   set_y_axis(graph_object);
+}
+
+template<class GraphType>
+void set_square_frame(GraphType* graph_object)
+{
+    set_axes(graph_object);
+
+    const double top_right_margin = right_margin;
+    gPad->SetTopMargin(top_right_margin);
+    gPad->SetRightMargin(top_right_margin);
+
+    const double bottom_left_margin = bottom_margin;
+    gPad->SetBottomMargin(bottom_left_margin);
+    gPad->SetLeftMargin(bottom_left_margin);
+
+    gPad->Update();
 }
 
 template<class GraphType>
@@ -200,11 +245,17 @@ void make_y_margin_smaller(GraphType* graph_object, const double ratio=0.7, cons
 
 TLegend* put_legend(unsigned int position, Option_t* option="", const double width=0.3, const double height=0.2);
 
+TMultiGraph* set_graph_colors_by_ring(TMultiGraph* mg);
+
+TMultiGraph* set_graph_marker_styles_by_ring(TMultiGraph* mg);
+
 } // namespace publish
 
 TMultiGraph* set_multigraph_axis_from_member(TMultiGraph* mg);
 
 TLine* draw_horizontal_line(const double y);
+
+TLine* draw_vertical_line(const double x);
 
 double find_x(const TGraph* g, const double y, double x_start=0, double x_end=0);
 
