@@ -86,12 +86,12 @@ namespace publish
 
 static const double top_margin = 0.075;
 static const double right_margin = 0.07;
-static const double bottom_margin = 0.18;
+static const double bottom_margin = 0.17;
 static const double left_margin = 0.14;
 
 static const double title_size = 0.07;
 static const double label_size = 0.07;
-static const double title_offset_x = 1.2;
+static const double title_offset_x = 1.1;
 static const double title_offset_y = 1.0;
 static const double label_offset_x = 0.015;
 
