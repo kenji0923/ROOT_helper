@@ -15,6 +15,7 @@
 #include <TGraph.h>
 #include <TGraph2D.h>
 #include <TH1.h>
+#include <THStack.h>
 #include <TLegend.h>
 #include <TLine.h>
 #include <TMultiGraph.h>
@@ -67,6 +68,9 @@ void DataSaver::save_object(ObjectType* obj, const std::filesystem::path& relati
   } else if (obj->InheritsFrom(TClass::GetClass<TMultiGraph>())) {
     obj->Write();
     save_child(dynamic_cast<TMultiGraph*>(obj)->GetListOfGraphs());
+  } else if (obj->InheritsFrom(TClass::GetClass<THStack>())) {
+    obj->Write();
+    save_child(dynamic_cast<THStack*>(obj)->GetHists());
   } else {
     for (const auto* class_type : class_to_save_list_) {
       if (obj->InheritsFrom(class_type)) {
@@ -81,17 +85,17 @@ namespace publish
 {
 
 static const double top_margin = 0.075;
-static const double right_margin = 0.05;
-static const double bottom_margin = 0.20;
+static const double right_margin = 0.07;
+static const double bottom_margin = 0.18;
 static const double left_margin = 0.14;
 
 static const double title_size = 0.07;
 static const double label_size = 0.07;
-static const double title_offset_x = 1.3;
+static const double title_offset_x = 1.2;
 static const double title_offset_y = 1.0;
 static const double label_offset_x = 0.015;
 
-static const double left_margin_medium = 0.15;
+static const double left_margin_medium = 0.16;
 static const double title_offset_y_medium = 1.15;
 
 void prepare();
@@ -153,7 +157,7 @@ void set_x_axis(GraphType* graph_object)
   axis->SetTitleSize(title_size);
   axis->SetLabelSize(label_size);
   axis->SetTitleOffset(title_offset_x);
-  axis->SetLabelOffset(label_offset_x);
+  // axis->SetLabelOffset(label_offset_x);
   axis->SetNdivisions(510);
   axis->SetDecimals(true);
   axis->CenterTitle();
