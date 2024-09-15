@@ -84,8 +84,8 @@ void DataSaver::save_object(ObjectType* obj, const std::filesystem::path& relati
 namespace publish
 {
 
-static const double top_margin = 0.075;
-static const double right_margin = 0.07;
+static const double top_margin = 0.04;
+static const double right_margin = 0.02;
 static const double bottom_margin = 0.17;
 static const double left_margin = 0.14;
 
@@ -95,6 +95,8 @@ static const double title_offset_x = 1.1;
 static const double title_offset_y = 1.0;
 static const double label_offset_x = 0.015;
 
+static const double top_margin_medium = 0.075;
+static const double right_margin_medium = 0.07;
 static const double left_margin_medium = 0.16;
 static const double title_offset_y_medium = 1.15;
 
@@ -145,24 +147,32 @@ void set_time_x_axis(GraphType* graph_object)
   axis->CenterTitle(true);
 }
 
+
 template<class GraphType>
 void set_x_axis(GraphType* graph_object)
 {
-  gPad->SetRightMargin(right_margin);
-  gPad->SetBottomMargin(bottom_margin);
+    gPad->SetRightMargin(right_margin);
+    gPad->SetBottomMargin(bottom_margin);
 
-  TAxis* axis;
+    TAxis* axis;
 
-  axis  = graph_object->GetXaxis();
-  axis->SetTitleSize(title_size);
-  axis->SetLabelSize(label_size);
-  axis->SetTitleOffset(title_offset_x);
-  // axis->SetLabelOffset(label_offset_x);
-  axis->SetNdivisions(510);
-  axis->SetDecimals(true);
-  axis->CenterTitle();
-
+    axis  = graph_object->GetXaxis();
+    axis->SetTitleSize(title_size);
+    axis->SetLabelSize(label_size);
+    axis->SetTitleOffset(title_offset_x);
+    axis->SetNdivisions(510);
+    axis->SetDecimals(true);
+    axis->CenterTitle();
 }
+
+
+template<class GraphType>
+void set_x_axis_medium(GraphType* graph_object)
+{
+    set_x_axis(graph_object);
+    gPad->SetRightMargin(right_margin_medium);
+}
+
 
 /**
  * Smallest margin.
