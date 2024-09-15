@@ -28,7 +28,7 @@ namespace ROOT_helper
 class DataSaver
 {
 public:
-  DataSaver(const std::filesystem::path& base_directory);
+  DataSaver(const std::filesystem::path& base_directory, const bool is_recreate=false);
   ~DataSaver();
 
   template<class ObjectType>
@@ -63,18 +63,18 @@ void DataSaver::save_object(ObjectType* obj, const std::filesystem::path& relati
   };
 
   if (obj->InheritsFrom(TClass::GetClass<TPad>())) {
-    if (obj->InheritsFrom(TClass::GetClass<TCanvas>())) obj->Write();
+    if (obj->InheritsFrom(TClass::GetClass<TCanvas>())) obj->Write("", TObject::kOverwrite);
     save_child(dynamic_cast<TPad*>(obj)->GetListOfPrimitives());
   } else if (obj->InheritsFrom(TClass::GetClass<TMultiGraph>())) {
-    obj->Write();
+    obj->Write("", TObject::kOverwrite);
     save_child(dynamic_cast<TMultiGraph*>(obj)->GetListOfGraphs());
   } else if (obj->InheritsFrom(TClass::GetClass<THStack>())) {
-    obj->Write();
+    obj->Write("", TObject::kOverwrite);
     save_child(dynamic_cast<THStack*>(obj)->GetHists());
   } else {
     for (const auto* class_type : class_to_save_list_) {
       if (obj->InheritsFrom(class_type)) {
-        obj->Write();
+        obj->Write("", TObject::kOverwrite);
         break;
       }
     }

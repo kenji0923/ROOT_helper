@@ -15,11 +15,15 @@
 
 namespace ROOT_helper {
 
-DataSaver::DataSaver(const std::filesystem::path& base_directory)
+DataSaver::DataSaver(const std::filesystem::path& base_directory, const bool is_recreate)
 : base_directory_(base_directory)
 {
   std::filesystem::create_directories(base_directory_);
-  f_write_ = std::make_unique<TFile>((base_directory / "data.root").c_str(), "RECREATE");
+
+  std::string open_mode = "UPDATE";
+  if (is_recreate) open_mode = "RECREATE";
+
+  f_write_ = std::make_unique<TFile>((base_directory / "data.root").c_str(), open_mode.c_str());
 }
 
 DataSaver::~DataSaver()
