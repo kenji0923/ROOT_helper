@@ -15,5 +15,10 @@
 #include "src/core/include/ROOT_helper/graphics.h"
 #include "src/core/graphics.cpp"
 
+#include "src/core/include/ROOT_helper/container.h"
+#include "src/core/container.cpp"
+
+#include "src/core/include/ROOT_helper/analysis.h"
+#include "src/core/analysis.cpp"
 
 #endif

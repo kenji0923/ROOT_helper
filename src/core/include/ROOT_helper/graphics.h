@@ -16,6 +16,9 @@ namespace ROOT_helper
 {
 
 
+Color_t get_color_in_ring(const unsigned int index);
+
+
 namespace publish 
 {
 

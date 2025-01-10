@@ -32,6 +32,8 @@ DataSaver::~DataSaver()
 
 void DataSaver::write_canvas(TCanvas* c, const std::filesystem::path& relative_save_directory) const
 {
+    gPad->Update();
+
     const std::filesystem::path write_directory = base_directory_ / relative_save_directory;
 
     save_object(c, relative_save_directory);
