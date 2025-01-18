@@ -16,7 +16,39 @@ namespace ROOT_helper
 {
 
 
+static const double text_size_default = 0.05;
+
+static const double title_offset_x_default = 1.1;
+
+static const double title_offset_y_default = 1.15;
+
+static const double top_margin_default = 0.01;
+static const double top_margin_with_exponent = 0.06;
+
+static const double left_margin_default = 0.12;
+
+static const double right_margin_default = 0.005;
+static const double right_margin_with_exponent = 0.07;
+
+static const double bottom_margin_default = 0.12;
+
+static const double margin_step_horizontal = 0.0175;
+static const double margin_step_vertcical = 0.01;
+
+
 Color_t get_color_in_ring(const unsigned int index);
+
+
+double increase_right_margin(const double scale=1);
+
+
+enum class LegendPosition
+{
+    TopLeft, TopRight, BottomRight, BottomLeft
+};
+
+
+TLegend* put_legend(LegendPosition leg_pos, Option_t* option="", const double width=0.3, const double height=0.2);
 
 
 namespace publish 
@@ -94,18 +126,21 @@ void set_time_x_axis(GraphType* graph_object)
 }
 
 
+/**
+ * Minimum right margin.
+ */
 template<class GraphType>
 void set_x_axis(GraphType* graph_object)
 {
-    gPad->SetRightMargin(right_margin);
-    gPad->SetBottomMargin(bottom_margin);
+    gPad->SetRightMargin(right_margin_default);
+    gPad->SetBottomMargin(bottom_margin_default);
 
     TAxis* axis;
 
-    axis  = graph_object->GetXaxis();
-    axis->SetTitleSize(title_size);
-    axis->SetLabelSize(label_size);
-    axis->SetTitleOffset(title_offset_x);
+    axis = graph_object->GetXaxis();
+    axis->SetTitleSize(text_size_default);
+    axis->SetLabelSize(text_size_default);
+    axis->SetTitleOffset(title_offset_x_default);
     axis->SetNdivisions(510);
     axis->SetDecimals(true);
     axis->CenterTitle();
@@ -121,21 +156,20 @@ void set_x_axis_medium(GraphType* graph_object)
 
 
 /**
- * Smallest margin.
- * Suitable for the axis with the positive range
+ * Suitable for 3-digits y-axis values with an exponent.
  */
 template<class GraphType>
 void set_y_axis(GraphType* graph_object)
 {
-    gPad->SetTopMargin(top_margin);
-    gPad->SetLeftMargin(left_margin);
+    gPad->SetTopMargin(top_margin_default);
+    gPad->SetLeftMargin(left_margin_default);
 
     TAxis* axis;
 
     axis = graph_object->GetYaxis();
-    axis->SetTitleSize(title_size);
-    axis->SetLabelSize(label_size);
-    axis->SetTitleOffset(title_offset_y);
+    axis->SetTitleSize(text_size_default);
+    axis->SetLabelSize(text_size_default);
+    axis->SetTitleOffset(title_offset_y_default);
     axis->SetNdivisions(505);
     axis->SetDecimals(true);
     axis->CenterTitle();
@@ -207,9 +241,6 @@ void make_y_margin_smaller(GraphType* graph_object, const double ratio=0.7, cons
     axis = graph_object->GetYaxis();
     axis->SetTitleOffset(axis->GetTitleOffset() * ratio);
 }
-
-
-TLegend* put_legend(unsigned int position, Option_t* option="", const double width=0.3, const double height=0.2);
 
 
 TMultiGraph* set_graph_colors_by_ring(TMultiGraph* mg);

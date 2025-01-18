@@ -28,6 +28,8 @@ public:
 
     void write_canvas(TCanvas* c, const std::filesystem::path& relative_save_directory="") const;
 
+    void write_canvas_without_data_saving(TCanvas* c, const std::filesystem::path& relative_save_directory="") const;
+
     std::filesystem::path create_directories(const std::filesystem::path& relative_path) const;
 
 private:

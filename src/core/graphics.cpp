@@ -24,13 +24,59 @@ Color_t get_color_in_ring(const unsigned int index)
 {
     switch (index)
     {
-	case 1:
-	    return kRed;
-	case 2:
-	    return kBlue;
-	default:
-	    return kBlack;
+	case 0:  return kAzure + 2;
+	case 1:  return kOrange + 10;
+	case 2:  return kTeal + 4;
+	case 3:  return kMagenta + 0;
+	case 4:  return kCyan + 1;
+	default: return kBlack;
     }
+}
+
+
+double increase_right_margin(const double scale)
+{
+    const double current = gPad->GetRightMargin();
+    const double next = std::max(0., current + margin_step_horizontal);
+
+    gPad->SetRightMargin(next * scale);
+
+    return next;
+}
+
+
+TLegend* put_legend(LegendPosition leg_pos, Option_t* option, const double width, const double height)
+{
+    gPad->Update();
+
+    const Double_t top_edge = 1.0 - gPad->GetTopMargin() - 0.02;
+    const Double_t right_edge = 1.0 - gPad->GetRightMargin() - 0.02;
+    const Double_t bottom_edge = gPad->GetBottomMargin() + 0.02;
+    const Double_t left_edge = gPad->GetLeftMargin() + 0.02;
+
+    TLegend* leg;
+
+    switch (leg_pos) {
+	case LegendPosition::TopLeft:
+	    leg = gPad->BuildLegend(left_edge, top_edge, left_edge + width, top_edge - height,  "", option);
+	    break;
+	case LegendPosition::TopRight:
+	    leg = gPad->BuildLegend(right_edge - width, top_edge, right_edge, top_edge - height, "", option);
+	    break;
+	case LegendPosition::BottomRight:
+	    leg = gPad->BuildLegend(right_edge - width, bottom_edge + height, right_edge, bottom_edge, "", option);
+	    break;
+	case LegendPosition::BottomLeft:
+	    leg = gPad->BuildLegend(width, height, width, height,  "", option);
+	    break;
+	default:
+	    exit(1);
+    }
+
+    leg->SetBorderSize(0);
+    leg->SetTextSize(text_size_default);
+
+    return leg;
 }
 
 
@@ -78,33 +124,6 @@ TCanvas* create_canvas_with_default_pad_matrix(const std::string& name, const st
 {
     auto [ n_pad_x, n_pad_y ] = get_default_n_pad(n_pad);
     return create_canvas(name, title, n_pad_x, n_pad_y, each_size_x, each_size_y);
-}
-
-
-TLegend* put_legend(unsigned int position, Option_t* option, const double width, const double height)
-{
-  const Double_t top_edge = 1.0 - gPad->GetTopMargin() - 0.02;
-  const Double_t right_edge = 1.0 - gPad->GetRightMargin() - 0.02;
-  const Double_t bottom_edge = gPad->GetBottomMargin() + 0.02;
-  const Double_t left_edge = gPad->GetLeftMargin() + 0.02;
-
-  TLegend* leg;
-  if (position == 0) { // Top-left
-    leg = gPad->BuildLegend(left_edge, top_edge, left_edge + width, top_edge - height,  "", option);
-  } else if (position == 1) { // Top-right
-    leg = gPad->BuildLegend(right_edge - width, top_edge, right_edge, top_edge - height, "", option);
-  } else if (position == 2) { // Bottom-right
-    leg = gPad->BuildLegend(right_edge - width, bottom_edge + height, right_edge, bottom_edge, "", option);
-  } else if (position == 3) {
-    leg = gPad->BuildLegend(width, height, width, height,  "", option);
-  } else {
-    leg = gPad->BuildLegend(width, height, width, height,  "", option);
-  }
-
-  leg->SetBorderSize(0);
-  leg->SetTextSize(0.06);
-
-  return leg;
 }
 
 

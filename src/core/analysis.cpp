@@ -2,11 +2,42 @@
 #include <ROOT_helper/analysis.h>
 #endif
 
+#include <TAxis.h>
+#include <TH1.h>
+#include <TGraphErrors.h>
 
 
 
 namespace ROOT_helper
 {
+
+
+TH1* scale_histo_x(TH1* h, const double scale)
+{
+    const int n_bin = h->GetXaxis()->GetNbins();
+    const double x_min = h->GetXaxis()->GetBinLowEdge(1);
+    const double x_max = h->GetXaxis()->GetBinUpEdge(n_bin);
+
+    h->SetBins(n_bin, x_min * scale, x_max * scale);
+
+    return h;
+}
+
+
+TH1* convert_to_density_histo(TH1* h)
+{
+    const int n_bin = h->GetXaxis()->GetNbins();
+
+    const double integral = h->Integral();
+
+    for (int i_bin = 1; i_bin <= n_bin; ++i_bin) {
+	const double bin_width = h->GetXaxis()->GetBinWidth(i_bin);
+	h->SetBinContent(i_bin, h->GetBinContent(i_bin) / bin_width / integral);
+	h->SetBinError(i_bin, h->GetBinError(i_bin) / bin_width / integral);
+    }
+
+    return h;
+}
 
 
 TGraphErrors* get_graph_g0xa_plus_g1(const double a, const TGraphErrors* g0, const TGraphErrors* g1)

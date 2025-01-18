@@ -8,6 +8,7 @@
 
 #include <TAxis.h>
 #include <TGraph.h>
+#include <THStack.h>
 #include <TMultiGraph.h>
 #include <TString.h>
 
@@ -16,73 +17,26 @@ namespace ROOT_helper
 {
 
 
-template<>
-ContainerWrapper<TMultiGraph>::ContainerWrapper(const std::string& nametitle)
+std::vector<std::string> get_object_path_from_directories(const std::string& object_name, const std::vector<std::string>& directory_list)
 {
-    container_ = new TMultiGraph(nametitle.c_str(), nametitle.c_str());
-}
+    std::vector<std::string> path_list;
 
-
-template<>
-ContainerWrapper<TMultiGraph>::~ContainerWrapper()
-{
-    delete container_;
-}
-
-
-template<>
-void ContainerWrapper<TMultiGraph>::Add(TObject* obj, std::string option)
-{
-    if (option == "") {
-	option = "L";
+    for (const auto& directory : directory_list) {
+	path_list.emplace_back(directory + "/" + object_name);
     }
 
-    TGraph* graph_obj = dynamic_cast<TGraph*>(obj);
-
-    container_->Add(graph_obj, option.c_str());
-    container_->SetTitle(Form("%s;%s;%s", container_->GetName(), graph_obj->GetXaxis()->GetTitle(), graph_obj->GetYaxis()->GetTitle()));
-
-    graph_obj->SetLineColor(get_color_in_ring(container_->GetListOfGraphs()->GetSize() - 1));
+    return path_list;
 }
 
 
-template<>
-void ContainerWrapper<TMultiGraph>::Draw(std::string option)
+ObjectList::ObjectList(const std::string& list_name)
+: list_name_(list_name)
 {
-    if (option == "") {
-	option = "A";
-    }
-
-    container_->Draw(option.c_str());
 }
 
 
-template<>
-TAxis* ContainerWrapper<TMultiGraph>::GetXaxis()
+ObjectList::~ObjectList()
 {
-    return container_->GetXaxis();
-}
-
-
-template<>
-TAxis* ContainerWrapper<TMultiGraph>::GetYaxis()
-{
-    return container_->GetYaxis();
-}
-
-
-template<>
-std::vector<TObject*> ContainerWrapper<TMultiGraph>::get_object_list() const
-{
-    std::vector<TObject*> object_list;
-
-    TList* list = container_->GetListOfGraphs();
-
-    for (auto* obj : *list) {
-	object_list.emplace_back(obj);
-    }
-
-    return object_list;
 }
 
 
@@ -146,6 +100,8 @@ void MultiObject::initialize_container(const std::string& nametitle)
 {
     if (object_type_ == MultiObjectType::Graph) {
 	container_ = new ContainerWrapper<TMultiGraph>(nametitle.c_str());
+    } else if (object_type_ == MultiObjectType::Histo) {
+	container_ = new ContainerWrapper<THStack>(nametitle.c_str());
     } else {
 	fprintf(stderr, "unkown type was specified for object type in MultiObject\n");
 	exit(1);
