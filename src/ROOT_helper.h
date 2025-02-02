@@ -1,10 +1,7 @@
 /**
  * Include this header for usage in ROOT cling interpreter.
  * Used only for an installed package.
- * Add following lines to rootlogon.C to add include path
- *         const char* ROOT_helper_include_path = "-I/usr/local/include/ROOT_helper";
- *         gInterpreter->AddIncludePath(ROOT_helper_include_path);
- *         gSystem->AddIncludePath(ROOT_helper_include_path);
+ * In order to use in the interpreter, see auxiliary/rootlogon.C
  */
 
 
