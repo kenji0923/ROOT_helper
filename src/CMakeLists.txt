@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 
 project(ROOT_helper)
@@ -7,11 +7,7 @@ project(ROOT_helper)
 set(CMAKE_CXX_STANDARD 17)
 
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
-
-option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -20,11 +16,9 @@ endif()
 set(CMAKE_CXX_FLAGS_RELEASE "-Ofast")
 
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+find_package(ROOT REQUIRED COMPONENTS Core Hist Gpad)
 
 
-find_package(ROOT REQUIRED COMPONENTS Core)
-
-
-add_subdirectory(${PROJECT_SOURCE_DIR}/document)
-add_subdirectory(${PROJECT_SOURCE_DIR}/core)
+add_subdirectory(document)
+add_subdirectory(core)
+add_subdirectory(implementation)
