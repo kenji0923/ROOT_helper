@@ -50,8 +50,8 @@ TCanvas* create_test_canvas(std::string canvas_name)
     f_wave->SetParameters(1, 4);
     f_wave->Draw("L");
     rh::publish::set_axes(f_wave);
-    f_wave->GetXaxis()->SetTitle("x (arb. units)");
-    f_wave->GetYaxis()->SetTitle("y (arb. units)");
+    f_wave->GetXaxis()->SetTitle("xyzABC (arb. units)");
+    f_wave->GetYaxis()->SetTitle("yzxBCA (arb. units)");
     std::cout << rh::increase_right_margin(1) << std::endl;
 
     data_saver.write_canvas(c);
