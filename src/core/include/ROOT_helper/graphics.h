@@ -16,24 +16,49 @@ namespace ROOT_helper
 {
 
 
-static const double text_size_default = 0.05;
+struct GraphicsSize
+{
+    static GraphicsSize current;
 
-static const double title_offset_x_default = 1.1;
+    unsigned int pad_pixel_w; unsigned int pad_pixel_h;
+    double text_size;
+    double title_offset_x; double title_offset_y;
+    double top_margin; double right_margin; double bottom_margin; double left_margin;
+    double top_margin_with_exponent; double right_margin_with_exponent;
+    double margin_step_horizontal; double margin_step_vertcical;
+};
 
-static const double title_offset_y_default = 1.15;
 
-static const double top_margin_default = 0.01;
-static const double top_margin_with_exponent = 0.06;
+static const GraphicsSize g_size_8pt {
+    700, 500,
+    0.05195,
+    1.1, 1.15,
+    0.01, 0.005, 0.12, 0.12,
+    0.06, 0.07,
+    0.0175, 0.01
+};
 
-static const double left_margin_default = 0.12;
 
-static const double right_margin_default = 0.005;
-static const double right_margin_with_exponent = 0.07;
+static const GraphicsSize g_size_10pt {
+    700, 500,
+    0.06494,
+    1.15, 1.20,
+    0.01, 0.005, 0.155, 0.15,
+    0.06, 0.07,
+    0.025, 0.01
+};
 
-static const double bottom_margin_default = 0.12;
 
-static const double margin_step_horizontal = 0.0175;
-static const double margin_step_vertcical = 0.01;
+void prepare();
+
+
+static std::pair<unsigned int, unsigned int> get_default_n_pad(const unsigned int n_plot);
+
+
+TCanvas* create_canvas(const std::string& name, const std::string& title, const unsigned int n_pad_x=1, const unsigned int n_pad_y=1, const unsigned int each_size_x=GraphicsSize::current.pad_pixel_w, const unsigned int each_size_y=GraphicsSize::current.pad_pixel_h);
+
+
+TCanvas* create_canvas_with_default_pad_matrix(const std::string& name, const std::string& title, const unsigned int n_pad=1, const unsigned int each_size_x=GraphicsSize::current.pad_pixel_h, const unsigned int each_size_y=GraphicsSize::current.pad_pixel_h);
 
 
 Color_t get_color_in_ring(const unsigned int index);
@@ -72,16 +97,16 @@ static const double left_margin_medium = 0.16;
 static const double title_offset_y_medium = 1.15;
 
 
-void prepare();
+void prepare(); // done
 
 
-static std::pair<unsigned int, unsigned int> get_default_n_pad(const unsigned int n_plot);
+static std::pair<unsigned int, unsigned int> get_default_n_pad(const unsigned int n_plot);//
 
 
-TCanvas* create_canvas(const std::string& name, const std::string& title, const unsigned int n_pad_x=1, const unsigned int n_pad_y=1, const unsigned int each_size_x=700, const unsigned int each_size_y=500);
+TCanvas* create_canvas(const std::string& name, const std::string& title, const unsigned int n_pad_x=1, const unsigned int n_pad_y=1, const unsigned int each_size_x=700, const unsigned int each_size_y=500);//
 
 
-TCanvas* create_canvas_with_default_pad_matrix(const std::string& name, const std::string& title, const unsigned int n_pad=1, const unsigned int each_size_x=700, const unsigned int each_size_y=500);
+TCanvas* create_canvas_with_default_pad_matrix(const std::string& name, const std::string& title, const unsigned int n_pad=1, const unsigned int each_size_x=700, const unsigned int each_size_y=500);//
 
 
 template<class GraphType>
@@ -132,15 +157,15 @@ void set_time_x_axis(GraphType* graph_object)
 template<class GraphType>
 void set_x_axis(GraphType* graph_object)
 {
-    gPad->SetRightMargin(right_margin_default);
-    gPad->SetBottomMargin(bottom_margin_default);
+    gPad->SetRightMargin(GraphicsSize::current.right_margin);
+    gPad->SetBottomMargin(GraphicsSize::current.bottom_margin);
 
     TAxis* axis;
 
     axis = graph_object->GetXaxis();
-    axis->SetTitleSize(text_size_default);
-    axis->SetLabelSize(text_size_default);
-    axis->SetTitleOffset(title_offset_x_default);
+    axis->SetTitleSize(GraphicsSize::current.text_size);
+    axis->SetLabelSize(GraphicsSize::current.text_size);
+    axis->SetTitleOffset(GraphicsSize::current.title_offset_x);
     axis->SetNdivisions(510);
     axis->SetDecimals(true);
     axis->CenterTitle();
@@ -161,15 +186,15 @@ void set_x_axis_medium(GraphType* graph_object)
 template<class GraphType>
 void set_y_axis(GraphType* graph_object)
 {
-    gPad->SetTopMargin(top_margin_default);
-    gPad->SetLeftMargin(left_margin_default);
+    gPad->SetTopMargin(GraphicsSize::current.top_margin);
+    gPad->SetLeftMargin(GraphicsSize::current.left_margin);
 
     TAxis* axis;
 
     axis = graph_object->GetYaxis();
-    axis->SetTitleSize(text_size_default);
-    axis->SetLabelSize(text_size_default);
-    axis->SetTitleOffset(title_offset_y_default);
+    axis->SetTitleSize(GraphicsSize::current.text_size);
+    axis->SetLabelSize(GraphicsSize::current.text_size);
+    axis->SetTitleOffset(GraphicsSize::current.title_offset_y);
     axis->SetNdivisions(505);
     axis->SetDecimals(true);
     axis->CenterTitle();

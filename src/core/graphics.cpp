@@ -20,6 +20,57 @@ namespace ROOT_helper
 {
 
 
+GraphicsSize GraphicsSize::current = g_size_8pt;
+
+
+void prepare()
+{
+    gStyle->SetOptStat(0);
+    gStyle->SetOptFit(0);
+    gStyle->SetOptTitle(0);
+}
+
+
+std::pair<unsigned int, unsigned int> get_default_n_pad(const unsigned int n_plot)
+{
+    if (n_plot <= 1) {
+	return { 1, 1 };
+    } else if (n_plot <= 2) {
+	return { 2, 1 };
+    } else if (n_plot <= 4) {
+	return { 2, 2 };
+    } else if (n_plot <= 6) {
+	return { 3, 2 };
+    } else if (n_plot <= 9) {
+	return { 3, 3 };
+    } else {
+	return { 4, 3 };
+    }
+}
+
+
+TCanvas* create_canvas(const std::string& name, const std::string& title, const unsigned int n_pad_x, const unsigned int n_pad_y, const unsigned int each_size_x, const unsigned int each_size_y)
+{
+    const double w = n_pad_x * each_size_x;
+    const double h = n_pad_y * each_size_y;
+
+    TCanvas* c = new TCanvas(name.c_str(), title.c_str(), w, h);
+
+    if (n_pad_x > 1 || n_pad_y > 1) {
+	c->Divide(n_pad_x, n_pad_y);
+    }
+
+    return c;
+}
+
+
+TCanvas* create_canvas_with_default_pad_matrix(const std::string& name, const std::string& title, const unsigned int n_pad, const unsigned int each_size_x, const unsigned int each_size_y)
+{
+    auto [ n_pad_x, n_pad_y ] = get_default_n_pad(n_pad);
+    return create_canvas(name, title, n_pad_x, n_pad_y, each_size_x, each_size_y);
+}
+
+
 Color_t get_color_in_ring(const unsigned int index)
 {
     switch (index)
@@ -36,10 +87,13 @@ Color_t get_color_in_ring(const unsigned int index)
 
 double increase_right_margin(const double scale)
 {
-    const double current = gPad->GetRightMargin();
-    const double next = std::max(0., current + margin_step_horizontal);
+    std::cout << "- " << GraphicsSize::current.left_margin << std::endl;
+    std::cout << "-- " << GraphicsSize::current.margin_step_horizontal << std::endl;
 
-    gPad->SetRightMargin(next * scale);
+    const double current = gPad->GetRightMargin();
+    const double next = std::max(0., current + scale * GraphicsSize::current.margin_step_horizontal);
+
+    gPad->SetRightMargin(next);
 
     return next;
 }
@@ -74,7 +128,7 @@ TLegend* put_legend(LegendPosition leg_pos, Option_t* option, const double width
     }
 
     leg->SetBorderSize(0);
-    leg->SetTextSize(text_size_default);
+    leg->SetTextSize(GraphicsSize::current.text_size);
 
     return leg;
 }

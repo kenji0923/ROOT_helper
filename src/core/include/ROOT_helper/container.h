@@ -11,6 +11,10 @@
 #include <THStack.h>
 #include <TMultiGraph.h>
 
+#ifndef ROOT_HELPER_USED_IN_INTERPRETER
+#include <ROOT_helper/graphics.h>
+#endif
+
 
 namespace ROOT_helper
 {
