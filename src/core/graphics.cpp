@@ -3,7 +3,6 @@
 #endif
 
 
-#include <regex>
 #include <utility>
 
 #include <TCanvas.h>
@@ -87,9 +86,6 @@ Color_t get_color_in_ring(const unsigned int index)
 
 double increase_right_margin(const double scale)
 {
-    std::cout << "- " << GraphicsSize::current.left_margin << std::endl;
-    std::cout << "-- " << GraphicsSize::current.margin_step_horizontal << std::endl;
-
     const double current = gPad->GetRightMargin();
     const double next = std::max(0., current + scale * GraphicsSize::current.margin_step_horizontal);
 

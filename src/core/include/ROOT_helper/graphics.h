@@ -23,6 +23,7 @@ struct GraphicsSize
     unsigned int pad_pixel_w; unsigned int pad_pixel_h;
     double text_size;
     double title_offset_x; double title_offset_y;
+    double title_offset_step_horizontal;
     double top_margin; double right_margin; double bottom_margin; double left_margin;
     double top_margin_with_exponent; double right_margin_with_exponent;
     double margin_step_horizontal; double margin_step_vertcical;
@@ -33,6 +34,7 @@ static const GraphicsSize g_size_8pt {
     700, 500,
     0.05195,
     1.1, 1.15,
+    0.2,
     0.01, 0.005, 0.1225, 0.12,
     0.06, 0.07,
     0.019, 0.01
@@ -43,6 +45,7 @@ static const GraphicsSize g_size_10pt {
     700, 500,
     0.06494,
     1.15, 1.20,
+    0.2,
     0.01, 0.005, 0.155, 0.15,
     0.06, 0.07,
     0.025, 0.01
@@ -65,6 +68,19 @@ Color_t get_color_in_ring(const unsigned int index);
 
 
 double increase_right_margin(const double scale=1);
+
+
+template<class GraphType>
+double increase_left_margin(GraphType* graph_object, const double scale=1)
+{
+    const double current = gPad->GetLeftMargin();
+    const double next = std::max(0., current + scale * GraphicsSize::current.margin_step_horizontal);
+
+    gPad->SetLeftMargin(next);
+    graph_object->GetYaxis()->SetTitleOffset(graph_object->GetYaxis()->GetTitleOffset() + scale * GraphicsSize::current.title_offset_step_horizontal);
+
+    return next;
+}
 
 
 enum class LegendPosition
