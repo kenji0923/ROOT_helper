@@ -48,9 +48,9 @@ target_sources(ROOThelper PUBLIC
 target_sources(ROOThelper PUBLIC
     FILE_SET top_header_for_interpreter
     TYPE HEADERS
-    BASE_DIRS ${CMAKE_SOURCE_DIR}
+    BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../
     FILES
-	${CMAKE_SOURCE_DIR}/ROOT_helper.h
+	${CMAKE_CURRENT_SOURCE_DIR}/../ROOT_helper.h
 )
 target_sources(ROOThelper PUBLIC
     FILE_SET source_for_interpreter

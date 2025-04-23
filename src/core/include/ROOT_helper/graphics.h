@@ -92,37 +92,66 @@ enum class LegendPosition
 TLegend* put_legend(LegendPosition leg_pos, Option_t* option="", const double width=0.3, const double height=0.2);
 
 
+/**
+ * Minimum right margin.
+ */
+template<class GraphType>
+void set_x_axis(GraphType* graph_object)
+{
+    gPad->SetRightMargin(GraphicsSize::current.right_margin);
+    gPad->SetBottomMargin(GraphicsSize::current.bottom_margin);
+
+    TAxis* axis;
+
+    axis = graph_object->GetXaxis();
+    axis->SetTitleSize(GraphicsSize::current.text_size);
+    axis->SetLabelSize(GraphicsSize::current.text_size);
+    axis->SetTitleOffset(GraphicsSize::current.title_offset_x);
+    axis->SetNdivisions(510);
+    axis->SetDecimals(true);
+    axis->CenterTitle();
+}
+
+
+/**
+ * Suitable for 3-digits y-axis values with an exponent.
+ */
+template<class GraphType>
+void set_y_axis(GraphType* graph_object)
+{
+    gPad->SetTopMargin(GraphicsSize::current.top_margin);
+    gPad->SetLeftMargin(GraphicsSize::current.left_margin);
+
+    TAxis* axis;
+
+    axis = graph_object->GetYaxis();
+    axis->SetTitleSize(GraphicsSize::current.text_size);
+    axis->SetLabelSize(GraphicsSize::current.text_size);
+    axis->SetTitleOffset(GraphicsSize::current.title_offset_y);
+    axis->SetNdivisions(505);
+    axis->SetDecimals(true);
+    axis->CenterTitle();
+}
+
+
+template<class GraphType>
+void set_axes(GraphType* graph_object)
+{
+    set_x_axis(graph_object);
+    set_y_axis(graph_object);
+}
+
+
+TLine* draw_horizontal_line(const double y);
+
+
+TLine* draw_vertical_line(const double x);
+
+
 namespace publish 
 {
 
 
-static const double top_margin = 0.04;
-static const double right_margin = 0.02;
-static const double bottom_margin = 0.17;
-static const double left_margin = 0.14;
-
-static const double title_size = 0.07;
-static const double label_size = 0.07;
-static const double title_offset_x = 1.1;
-static const double title_offset_y = 1.0;
-static const double label_offset_x = 0.015;
-
-static const double top_margin_medium = 0.075;
-static const double right_margin_medium = 0.07;
-static const double left_margin_medium = 0.16;
-static const double title_offset_y_medium = 1.15;
-
-
-void prepare(); // done
-
-
-static std::pair<unsigned int, unsigned int> get_default_n_pad(const unsigned int n_plot);//
-
-
-TCanvas* create_canvas(const std::string& name, const std::string& title, const unsigned int n_pad_x=1, const unsigned int n_pad_y=1, const unsigned int each_size_x=700, const unsigned int each_size_y=500);//
-
-
-TCanvas* create_canvas_with_default_pad_matrix(const std::string& name, const std::string& title, const unsigned int n_pad=1, const unsigned int each_size_x=700, const unsigned int each_size_y=500);//
 
 
 template<class GraphType>
@@ -167,97 +196,47 @@ void set_time_x_axis(GraphType* graph_object)
 }
 
 
-/**
- * Minimum right margin.
- */
-template<class GraphType>
-void set_x_axis(GraphType* graph_object)
-{
-    gPad->SetRightMargin(GraphicsSize::current.right_margin);
-    gPad->SetBottomMargin(GraphicsSize::current.bottom_margin);
-
-    TAxis* axis;
-
-    axis = graph_object->GetXaxis();
-    axis->SetTitleSize(GraphicsSize::current.text_size);
-    axis->SetLabelSize(GraphicsSize::current.text_size);
-    axis->SetTitleOffset(GraphicsSize::current.title_offset_x);
-    axis->SetNdivisions(510);
-    axis->SetDecimals(true);
-    axis->CenterTitle();
-}
+// template<class GraphType>
+// void set_x_axis_medium(GraphType* graph_object)
+// {
+//     set_x_axis(graph_object);
+//     gPad->SetRightMargin(right_margin_medium);
+// }
 
 
-template<class GraphType>
-void set_x_axis_medium(GraphType* graph_object)
-{
-    set_x_axis(graph_object);
-    gPad->SetRightMargin(right_margin_medium);
-}
+// template<class GraphType>
+// void set_y_axis_medium(GraphType* graph_object)
+// {
+//     gPad->SetTopMargin(top_margin);
+//     gPad->SetLeftMargin(left_margin_medium);
+// 
+//     TAxis* axis;
+// 
+//     axis = graph_object->GetYaxis();
+//     axis->SetTitleSize(title_size);
+//     axis->SetLabelSize(label_size);
+//     axis->SetTitleOffset(title_offset_y_medium);
+//     axis->SetNdivisions(505);
+//     axis->SetDecimals(true);
+//     axis->CenterTitle();
+// }
 
 
-/**
- * Suitable for 3-digits y-axis values with an exponent.
- */
-template<class GraphType>
-void set_y_axis(GraphType* graph_object)
-{
-    gPad->SetTopMargin(GraphicsSize::current.top_margin);
-    gPad->SetLeftMargin(GraphicsSize::current.left_margin);
-
-    TAxis* axis;
-
-    axis = graph_object->GetYaxis();
-    axis->SetTitleSize(GraphicsSize::current.text_size);
-    axis->SetLabelSize(GraphicsSize::current.text_size);
-    axis->SetTitleOffset(GraphicsSize::current.title_offset_y);
-    axis->SetNdivisions(505);
-    axis->SetDecimals(true);
-    axis->CenterTitle();
-}
-
-
-template<class GraphType>
-void set_y_axis_medium(GraphType* graph_object)
-{
-    gPad->SetTopMargin(top_margin);
-    gPad->SetLeftMargin(left_margin_medium);
-
-    TAxis* axis;
-
-    axis = graph_object->GetYaxis();
-    axis->SetTitleSize(title_size);
-    axis->SetLabelSize(label_size);
-    axis->SetTitleOffset(title_offset_y_medium);
-    axis->SetNdivisions(505);
-    axis->SetDecimals(true);
-    axis->CenterTitle();
-}
-
-
-template<class GraphType>
-void set_axes(GraphType* graph_object)
-{
-    set_x_axis(graph_object);
-    set_y_axis(graph_object);
-}
-
-
-template<class GraphType>
-void set_square_frame(GraphType* graph_object)
-{
-    set_axes(graph_object);
-
-    const double top_right_margin = right_margin;
-    gPad->SetTopMargin(top_right_margin);
-    gPad->SetRightMargin(top_right_margin);
-
-    const double bottom_left_margin = bottom_margin;
-    gPad->SetBottomMargin(bottom_left_margin);
-    gPad->SetLeftMargin(bottom_left_margin);
-
-    gPad->Update();
-}
+// template<class GraphType>
+// void set_square_frame(GraphType* graph_object)
+// {
+//     set_axes(graph_object);
+// 
+//     const double top_right_margin = right_margin;
+//     gPad->SetTopMargin(top_right_margin);
+//     gPad->SetRightMargin(top_right_margin);
+// 
+//     const double bottom_left_margin = bottom_margin;
+//     gPad->SetBottomMargin(bottom_left_margin);
+//     gPad->SetLeftMargin(bottom_left_margin);
+// 
+//     gPad->Update();
+// }
 
 
 template<class GraphType>
@@ -270,18 +249,18 @@ void set_y_axis_full_width(GraphType* graph_object)
 }
 
 
-template<class GraphType>
-void make_y_margin_smaller(GraphType* graph_object, const double ratio=0.7, const double margin_ratio=1.1)
-{
-    gPad->SetLeftMargin(left_margin * ratio * margin_ratio);
-
-    TAxis* axis;
-
-    axis  = graph_object->GetXaxis();
-
-    axis = graph_object->GetYaxis();
-    axis->SetTitleOffset(axis->GetTitleOffset() * ratio);
-}
+// template<class GraphType>
+// void make_y_margin_smaller(GraphType* graph_object, const double ratio=0.7, const double margin_ratio=1.1)
+// {
+//     gPad->SetLeftMargin(left_margin * ratio * margin_ratio);
+// 
+//     TAxis* axis;
+// 
+//     axis  = graph_object->GetXaxis();
+// 
+//     axis = graph_object->GetYaxis();
+//     axis->SetTitleOffset(axis->GetTitleOffset() * ratio);
+// }
 
 
 TMultiGraph* set_graph_colors_by_ring(TMultiGraph* mg);
@@ -294,12 +273,6 @@ TMultiGraph* set_graph_marker_styles_by_ring(TMultiGraph* mg);
 
 
 TMultiGraph* set_multigraph_axis_from_member(TMultiGraph* mg);
-
-
-TLine* draw_horizontal_line(const double y);
-
-
-TLine* draw_vertical_line(const double x);
 
 
 double find_x(const TGraph* g, const double y, double x_start=0, double x_end=0);

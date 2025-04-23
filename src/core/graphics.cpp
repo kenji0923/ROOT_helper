@@ -3,6 +3,7 @@
 #endif
 
 
+#include <regex>
 #include <utility>
 
 #include <TCanvas.h>
@@ -130,16 +131,26 @@ TLegend* put_legend(LegendPosition leg_pos, Option_t* option, const double width
 }
 
 
+TLine* draw_horizontal_line(const double y)
+{
+    gPad->Update();
+    TLine* l = new TLine(gPad->GetUxmin(), y, gPad->GetUxmax(), y);
+    l->Draw("SAME");
+    return l;
+}
+
+
+TLine* draw_vertical_line(const double x)
+{
+    gPad->Update();
+    TLine* l = new TLine(x, gPad->GetUymin(), x, gPad->GetUymax());
+    l->Draw("SAME");
+    return l;
+}
+
+
 namespace publish
 {
-
-
-void prepare()
-{
-    gStyle->SetOptStat(0);
-    gStyle->SetOptFit(0);
-    gStyle->SetOptTitle(0);
-}
 
 
 std::pair<unsigned int, unsigned int> get_default_n_pad(const unsigned int n_plot)
@@ -249,24 +260,6 @@ TMultiGraph* set_multigraph_axis_from_member(TMultiGraph* mg)
 	break;
     }
     return mg;
-}
-
-
-TLine* draw_horizontal_line(const double y)
-{
-    gPad->Update();
-    TLine* l = new TLine(gPad->GetUxmin(), y, gPad->GetUxmax(), y);
-    l->Draw("SAME");
-    return l;
-}
-
-
-TLine* draw_vertical_line(const double x)
-{
-    gPad->Update();
-    TLine* l = new TLine(x, gPad->GetUymin(), x, gPad->GetUymax());
-    l->Draw("SAME");
-    return l;
 }
 
 

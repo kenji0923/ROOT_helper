@@ -92,7 +92,7 @@ void MultiObject::Draw(std::string option)
 {
     container_->Draw(option);
 
-    publish::set_axes(container_);
+    set_axes(container_);
 }
 
 
