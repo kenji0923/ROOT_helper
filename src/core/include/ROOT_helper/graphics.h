@@ -67,6 +67,12 @@ TCanvas* create_canvas_with_default_pad_matrix(const std::string& name, const st
 Color_t get_color_in_ring(const unsigned int index);
 
 
+/**
+ * Calibrated to allow a label on the top border.
+ */
+double increase_top_margin(const double scale=1);
+
+
 double increase_right_margin(const double scale=1);
 
 

@@ -85,6 +85,17 @@ Color_t get_color_in_ring(const unsigned int index)
 }
 
 
+double increase_top_margin(const double scale)
+{
+    const double current = gPad->GetTopMargin();
+    const double next = std::max(0., current + scale * GraphicsSize::current.margin_step_vertcical);
+
+    gPad->SetTopMargin(next);
+
+    return next;
+}
+
+
 double increase_right_margin(const double scale)
 {
     const double current = gPad->GetRightMargin();

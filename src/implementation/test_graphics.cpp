@@ -49,7 +49,7 @@ TCanvas* create_test_canvas(std::string canvas_name)
     f_wave->SetLineColor(rh::get_color_in_ring(0));
     f_wave->SetParameters(1, 4);
     f_wave->Draw("L");
-    rh::publish::set_axes(f_wave);
+    rh::set_axes(f_wave);
     f_wave->GetXaxis()->SetTitle("xyzABC (arb. units)");
     f_wave->GetYaxis()->SetTitle("yzxBCA (arb. units)");
     std::cout << rh::increase_right_margin(1) << std::endl;
