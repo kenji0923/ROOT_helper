@@ -265,8 +265,8 @@ enum class MultiObjectType
 class MultiObject
 {
 public:
-    MultiObject(MultiObjectType object_type, const std::string& nametitle, TDirectory* directory, const std::vector<std::string>& object_name);
-    MultiObject(MultiObjectType object_type, const std::string& nametitle, const std::vector<TObject*> obj_list);
+    MultiObject(MultiObjectType object_type, const std::string& nametitle, TDirectory* directory, const std::vector<std::string>& object_name, const std::string& add_option="");
+    MultiObject(MultiObjectType object_type, const std::string& nametitle, const std::vector<TObject*> obj_list, const std::string& add_option="");
     ~MultiObject();
 
     void Draw(std::string option="");

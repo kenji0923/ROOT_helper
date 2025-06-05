@@ -40,7 +40,7 @@ ObjectList::~ObjectList()
 }
 
 
-MultiObject::MultiObject(MultiObjectType object_type, const std::string& nametitle, TDirectory* directory, const std::vector<std::string>& object_name)
+MultiObject::MultiObject(MultiObjectType object_type, const std::string& nametitle, TDirectory* directory, const std::vector<std::string>& object_name, const std::string& add_option)
 : object_type_(object_type)
 {
     initialize_container(nametitle);
@@ -57,12 +57,12 @@ MultiObject::MultiObject(MultiObjectType object_type, const std::string& nametit
 
 	object_[i_obj] = obj;
 
-	container_->Add(obj);
+	container_->Add(obj, add_option);
     }
 }
 
 
-MultiObject::MultiObject(MultiObjectType object_type, const std::string& nametitle, const std::vector<TObject*> obj_list)
+MultiObject::MultiObject(MultiObjectType object_type, const std::string& nametitle, const std::vector<TObject*> obj_list, const std::string& add_option)
 : object_type_(object_type)
 {
     initialize_container(nametitle);
@@ -77,7 +77,7 @@ MultiObject::MultiObject(MultiObjectType object_type, const std::string& nametit
 
 	object_[i_obj] = obj;
 
-	container_->Add(obj);
+	container_->Add(obj, add_option);
     }
 }
 
