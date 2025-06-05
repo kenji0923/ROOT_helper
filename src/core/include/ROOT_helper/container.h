@@ -127,7 +127,7 @@ struct DefaultOptions<TMultiGraph>
     TList* get_list(TMultiGraph* container) { return container->GetListOfGraphs(); }
     TGraph* get_type_specified_obj(TObject* obj) { return static_cast<TGraph*>(obj); }
 
-    std::string add = "L";
+    std::string add = "PL";
     std::string draw = "A";
 };
 
@@ -211,6 +211,7 @@ void ContainerWrapper<ContainerType>::Add(TObject* obj, std::string option)
     container_->Add(specified_obj, option.c_str());
     container_->SetTitle(Form("%s;%s;%s", container_->GetName(), specified_obj->GetXaxis()->GetTitle(), specified_obj->GetYaxis()->GetTitle()));
 
+    specified_obj->SetMarkerColor(get_color_in_ring(defaults_.get_list_size(container_) - 1));
     specified_obj->SetLineColor(get_color_in_ring(defaults_.get_list_size(container_) - 1));
 }
 
