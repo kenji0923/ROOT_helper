@@ -127,7 +127,7 @@ struct DefaultOptions<TMultiGraph>
     TList* get_list(TMultiGraph* container) { return container->GetListOfGraphs(); }
     TGraph* get_type_specified_obj(TObject* obj) { return static_cast<TGraph*>(obj); }
 
-    std::string add = "PL";
+    std::string add = "P";
     std::string draw = "A";
 };
 
