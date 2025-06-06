@@ -9,11 +9,15 @@
 #include <TCanvas.h>
 #include <TGraph.h>
 #include <TMultiGraph.h>
+#include <TLatex.h>
 #include <TLine.h>
 
 
 namespace ROOT_helper
 {
+
+
+static TLatex kLatex;
 
 
 struct GraphicsSize
@@ -335,6 +339,9 @@ TGraph* convert_graph_yaxis(TGraph** g, ConverterType conversion_expr, const std
     (*g)->SetBit(TGraph::kResetHisto);
     return *g;
 }
+
+
+TLatex* draw_latex_ndc(const double x0, const double y0, const std::string& content);
 
 
 } // namespace ROOT_helper

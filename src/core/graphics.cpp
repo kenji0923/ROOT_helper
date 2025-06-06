@@ -11,6 +11,7 @@
 #include <TGraph.h>
 #include <TMultiGraph.h>
 #include <TLegend.h>
+#include <TLatex.h>
 #include <TLine.h>
 #include <TSpline.h>
 #include <TStyle.h>
@@ -28,6 +29,8 @@ void prepare()
     gStyle->SetOptStat(0);
     gStyle->SetOptFit(0);
     gStyle->SetOptTitle(0);
+
+    kLatex.SetTextSize(GraphicsSize::current.text_size * 0.8);
 }
 
 
@@ -296,6 +299,12 @@ double find_x(const TGraph*g, const double y, double x_start, double x_end)
     delete spl;
 
     return x;
+}
+
+
+TLatex* draw_latex_ndc(const double x0, const double y0, const std::string& content)
+{
+    return kLatex.DrawLatexNDC(x0, y0, content.c_str());
 }
 
 
