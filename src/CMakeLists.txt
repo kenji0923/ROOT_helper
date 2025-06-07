@@ -21,4 +21,4 @@ find_package(ROOT REQUIRED COMPONENTS Core Hist Gpad)
 
 # add_subdirectory(document)
 add_subdirectory(core)
-add_subdirectory(implementation)
+add_subdirectory(exec)
