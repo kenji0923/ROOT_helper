@@ -55,9 +55,10 @@ TCanvas* create_canvas(const std::string& name, const std::string& title, const 
     const double h = n_pad_y * each_size_y;
 
     TCanvas* c = new TCanvas(name.c_str(), title.c_str(), w, h);
+    c->SetCanvasSize(w, h);
 
     if (n_pad_x > 1 || n_pad_y > 1) {
-	c->Divide(n_pad_x, n_pad_y);
+	c->Divide(n_pad_x, n_pad_y, 1e-6, 1e-6);
     }
 
     return c;
