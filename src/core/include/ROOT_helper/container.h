@@ -106,6 +106,8 @@ struct IContainerWrapper
     virtual void Draw(std::string option="") = 0;
     virtual TAxis* GetXaxis() = 0;
     virtual TAxis* GetYaxis() = 0;
+    virtual double GetMinimum() = 0;
+    virtual double GetMaximum() = 0;
 
     virtual std::vector<TObject*> get_object_list() const = 0;
 };
@@ -178,6 +180,8 @@ public:
     void Draw(std::string option) override;
     TAxis* GetXaxis() override;
     TAxis* GetYaxis() override;
+    double GetMinimum() override;
+    double GetMaximum() override;
 
     std::vector<TObject*> get_object_list() const override;
 
@@ -236,6 +240,20 @@ template<class ContainerType>
 TAxis* ContainerWrapper<ContainerType>::GetYaxis()
 {
     return container_->GetYaxis();
+}
+
+
+template<class ContainerType>
+double ContainerWrapper<ContainerType>::GetMinimum()
+{
+    return container_->GetHistogram()->GetMinimum();
+}
+
+
+template<class ContainerType>
+double ContainerWrapper<ContainerType>::GetMaximum()
+{
+    return container_->GetHistogram()->GetMaximum();
 }
 
 
