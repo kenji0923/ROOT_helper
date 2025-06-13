@@ -38,8 +38,8 @@ static const GraphicsSize g_size_8pt {
     700, 500,
     0.05195,
     1.1, 1.15,
-    0.2,
-    0.01, 0.005, 0.1225, 0.12,
+    0.225,
+    0.01, 0.005, 0.14, 0.14,
     0.06, 0.07,
     0.019, 0.01
 };
@@ -123,24 +123,40 @@ void set_x_axis(GraphType* graph_object)
 }
 
 
-/**
- * Suitable for 3-digits y-axis values with an exponent.
- */
 template<class GraphType>
 void set_y_axis(GraphType* graph_object)
 {
+    TAxis* axis;
+    axis = graph_object->GetYaxis();
+
+    /**
+     * For 2-digits y-axis value
+     */
+
     gPad->SetTopMargin(GraphicsSize::current.top_margin);
     gPad->SetLeftMargin(GraphicsSize::current.left_margin);
 
-    TAxis* axis;
-
-    axis = graph_object->GetYaxis();
     axis->SetTitleSize(GraphicsSize::current.text_size);
     axis->SetLabelSize(GraphicsSize::current.text_size);
     axis->SetTitleOffset(GraphicsSize::current.title_offset_y);
     axis->SetNdivisions(505);
     axis->SetDecimals(true);
     axis->CenterTitle();
+
+    const double min = graph_object->GetMinimum();
+    const double max = graph_object->GetMaximum();
+
+    const bool has_negative = ! (min > 0);
+
+    if (has_negative) {
+	increase_left_margin(graph_object);
+    }
+
+    const double diff_per_div = (max - min) / 5;
+
+    const int y_digits = std::floor( std::log10( std::max( { std::abs(max) / diff_per_div, std::abs(min) / diff_per_div } ) ) ) + 2;
+    
+    increase_left_margin(graph_object, y_digits - 2);
 }
 
 
