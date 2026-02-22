@@ -4,8 +4,12 @@
 
 
 #include <filesystem>
+#include <memory>
 
 #include <TCanvas.h>
+#include <TFile.h>
+#include <TPad.h>
+#include <TDirectory.h>
 
 
 namespace ROOT_helper

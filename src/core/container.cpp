@@ -11,6 +11,10 @@
 #include <THStack.h>
 #include <TMultiGraph.h>
 #include <TString.h>
+#include <TObject.h>
+#include <TDirectory.h>
+#include <cstdio>
+#include <cstdlib>
 
 
 namespace ROOT_helper

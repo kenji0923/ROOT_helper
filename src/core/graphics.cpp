@@ -15,6 +15,8 @@
 #include <TLine.h>
 #include <TSpline.h>
 #include <TStyle.h>
+#include <TPad.h>
+#include <TList.h>
 
 
 namespace ROOT_helper
